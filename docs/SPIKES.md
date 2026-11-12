@@ -12,6 +12,48 @@
   `node` 跑纯 JS 解码/栅格化单测。
 - **不得**把“沙箱里 pdfinfo 通过”当成“PDFium 里 JS 通过”。
 
+## 2026-11-12：S1/S2 已生成（静态校验通过，Chrome 待测）
+
+生成命令：
+
+```
+python3 tools/pdf/spike/gen_spikes.py --out build/spike
+```
+
+产物（`build/spike/`，不提交）：
+
+| 文件 | 大小 | 说明 |
+|---|---|---|
+| `s1_courier_160x90.pdf` | 36,250 B | 90 行 + HUD；Courier |
+| `s1_type3_160x90.pdf` | 38,917 B | 90 行 + HUD；Type3 |
+| `s1_courier_240x135.pdf` | 65,450 B | 135 行 + HUD；Courier |
+| `s1_courier_320x180.pdf` | 99,326 B | 180 行 + HUD；Courier |
+| `s2_type3.pdf` | 34,186 B | 80 行 + HUD；Type3 |
+| `s2_courier.pdf` | 31,577 B | 80 行 + HUD；Courier |
+
+静态校验（沙箱内）：
+
+- `pdfinfo`：全部 1 页，1280×768 pt，PDF 1.7。
+- 字段数：S1 = 91/136/181 个 `/FT /Tx`（行 + HUD）+ 1 个 `/FT /Btn`；
+  S2 = 81 个 `/FT /Tx`（80 行 + HUD）。
+- `pdffonts s2_type3.pdf`：`Block` 是 **Type 3 / embedded**；Courier/Helvetica 是 Type 1。
+- `pdftoppm`：全部能出图；S2 的页面文本样本与字段值都能被 Poppler 渲染
+  （Type3 样张非黑像素 14,802；Courier 3,321；字段面板 119,403 / 26,584）。
+- S1 的 JS 已从 PDF 流里解出并用 `node --check` 验证语法；`/OpenAction` 指向 JS 流。
+- **未验证**：Chrome/PDFium 里的实际字段更新吞吐（沙箱无 Chrome）。
+
+Chrome 打开方式与记录：
+
+1. 打开 `build/spike/s1_courier_160x90.pdf`，点 `Start`（或等 1 秒自动开始）。
+   约 120 帧后 HUD 显示 `avg=…ms fps=… setter=…ms`，把这三个数填进下面的表。
+2. 同样跑 `s1_type3_160x90.pdf`、`s1_courier_240x135.pdf`、`s1_courier_320x180.pdf`。
+3. 打开 `s2_type3.pdf` / `s2_courier.pdf`：
+   - 顶部是页面文本样张（静态），底部是表单字段（AP）；
+   - 看 Type3 是否显示为方块、是否有乱码/缺字、8pt 格子是否接近正方形；
+   - 如果 Type3 的字段面板是空白/乱码，记录为“Type3 不可用，回退 Courier”。
+
+> S2 的图案只是**字体/AP 测试**，不是最终砖形；最终砖形由 `TileShape` 生成。
+
 ## S1：行字段吞吐
 
 ### 目标
