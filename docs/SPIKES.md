@@ -67,7 +67,8 @@ Chrome 打开方式与记录：
 - 屏幕 = H 个字段，每行一个，`/FT /Tx`、只读、无边框、黑底、白色等宽字体。
 - JS：
   - `Start` 按钮或 `/OpenAction` 延迟启动。
-  - `tick()` 最多执行 `TARGET=300` 帧；每帧给每行写一个变化的 160 字符串。
+  - `tick()` 最多执行 `TARGET=120` 帧；每帧给每行写一个变化的 W 字符串
+    （W=160/240/320，随 H 保持 16:9）。
   - 用 `Date.now()` 量**两次 tick 之间的墙钟**，累加；HUD 显示
     `frames / elapsed`、`ms/frame`、`fps`。
   - `app.setTimeOut("tick()", 0)`，让回调尽快跑；慢帧时回调间隔会变大。
