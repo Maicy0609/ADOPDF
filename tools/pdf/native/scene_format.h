@@ -12,7 +12,7 @@
 // frames 模式的每帧 blob：
 //   f32 t  u16 tile  f32 bpm  f32 camX  f32 camY  f32 zoom
 //   u8 hudLen  char hud[hudLen]
-//   H × { u8 runs, runs × (u8 level, u8 count) }
+//   H × { u16 runs, runs × (u8 level, u8 count) }
 
 #include <cstdint>
 #include <cstdio>
@@ -22,7 +22,7 @@
 
 namespace adpdf {
 
-constexpr uint16_t kVersion = 1;
+constexpr uint16_t kVersion = 2;   // v2: 行 RLE 的 run 数改成 u16（高分辨率下一行可超 255 段）
 constexpr char kMagic[4] = {'A', 'D', 'P', 'F'};
 
 enum Mode : uint8_t {

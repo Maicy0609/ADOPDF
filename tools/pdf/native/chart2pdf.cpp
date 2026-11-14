@@ -365,8 +365,8 @@ bool parseArgs(int argc, char** argv, Options& opt, std::string& err) {
     opt.levelPath = positional[0];
     opt.outPath   = positional[1];
     if (opt.fps < 1 || opt.fps > 120) { err = "--fps out of range (1..120)"; return false; }
-    if (opt.height < 60 || opt.height > 180 || opt.width < 80 || opt.width > 600) {
-        err = "行数 60..180、宽度 80..600（默认 266x90，见 D13）";
+    if (opt.height < 60 || opt.height > 400 || opt.width < 80 || opt.width > 2000) {
+        err = "行数 60..400、宽度 80..2000（默认 266x90，见 D13）";
         return false;
     }
     return true;
@@ -557,8 +557,8 @@ int main(int argc, char** argv) {
         for (int y = 0; y < grid.h; y++) {
             const RowRle& rr = rows[(size_t)y];
             size_t runs = rr.pairs.size() / 2;
-            if (runs > 255) { std::fprintf(stderr, "chart2pdf: 行 RLE run 数 > 255\n"); return 5; }
-            w.u8((uint8_t)runs);
+            if (runs > 65535) { std::fprintf(stderr, "chart2pdf: 行 RLE run 数 > 65535\n"); return 5; }
+            w.u16((uint16_t)runs);
             w.bytes(rr.pairs.data(), rr.pairs.size());
         }
         offsets.push_back((uint32_t)frameStart);

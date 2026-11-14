@@ -35,7 +35,7 @@ def make_scene(frames, w=160, h=90, fps=30):
         body += bytes((len(hud),)) + hud
         for row in fr["rows"]:
             rle = pdfc.rle_encode_row(row)
-            body += bytes((len(rle) // 2,)) + rle
+            body += struct.pack('<H', len(rle) // 2) + rle
         offsets.append(sum(len(b) for b in blobs))
         blobs.append(bytes(body))
 

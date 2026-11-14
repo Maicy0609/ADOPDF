@@ -40,7 +40,7 @@ RAIL_Y0, RAIL_Y1 = 12, 52
 RAIL_LINE_Y = 62
 
 SCENE_MAGIC = b"ADPF"
-SCENE_VERSION = 1
+SCENE_VERSION = 2
 SCENE_HEADER_SIZE = 45  # 见 tools/pdf/native/scene_format.h
 
 # chart2pdf 需要链接的 ADOCAO core 闭包（与 docs/ARCHITECTURE.md §2.1 对应；
@@ -128,8 +128,8 @@ def decode_frame(scene: dict, k: int) -> dict:
     h = scene["height"]
     rows = []
     for _ in range(h):
-        runs = raw[p]
-        p += 1
+        runs = raw[p] | (raw[p + 1] << 8)
+        p += 2
         row = []
         for _ in range(runs):
             level, count = raw[p], raw[p + 1]
@@ -435,7 +435,7 @@ function draw(k){
   for(i=0;i<hl;i++) hud+=String.fromCharCode(U8[p+i]);
   p+=hl;
   for(r=0;r<H;r++){
-    nr=U8[p]; p+=1; s="";
+    nr=U8[p]|(U8[p+1]<<8); p+=2; s="";
     for(i=0;i<nr;i++){ lv=U8[p]; cnt=U8[p+1]; p+=2; s+=CH[lv].substr(0,cnt); }
     if(s!==LAST[r]){ F[r].value=s; LAST[r]=s; }
   }
@@ -639,8 +639,8 @@ def main(argv: list[str] | None = None) -> int:
     if ext != ".adofai":
         print("pdfc: 本版本只支持明文 .adofai（压缩容器需要 archive 后端）", file=sys.stderr)
         return 2
-    if args.rows < 60 or args.rows > 180:
-        print("pdfc: --rows 只接受 60..180", file=sys.stderr)
+    if args.rows < 60 or args.rows > 400:
+        print("pdfc: --rows 只接受 60..400", file=sys.stderr)
         return 2
     if args.play_fps < 1 or args.play_fps > args.fps:
         print(f"pdfc: --play-fps 需在 1..{args.fps}（大于等于 --fps 就没有慢放意义）", file=sys.stderr)
