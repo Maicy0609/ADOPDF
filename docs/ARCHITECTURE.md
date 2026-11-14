@@ -145,7 +145,8 @@ sy = (ry/halfH * 0.5 + 0.5) * H
 ### 3.2 PDF 结构
 
 - Catalog → Pages → 单 Page。
-- Page `/MediaBox [0 0 1280 768]`；内容流画黑底和分隔线。
+- Page `/MediaBox [0 0 1280 816]`：24pt 上边距 → 720pt 屏幕（`y=72..792`）→ 60pt 控制栏（`y=0..60`，分隔线 `y=62`）；
+  内容流画黑底和分隔线。
 - `/Annots`：90 个行字段 + HUD + 3 个按钮。
 - `/AcroForm /Fields` 同上；`/DR /Font` 放 Type3 或 Courier。
 - `/OpenAction` JS 初始化；按钮 `/AA /U`。

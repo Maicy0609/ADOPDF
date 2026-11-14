@@ -19,9 +19,10 @@
 ## 当前状态
 
 - 设计已冻结（2026-11-12）。
-- S1/S2 最小 PDF 已生成并通过沙箱静态校验；**Chrome/PDFium 实测未完成，S1/S2 未通过**。
+- S1/S2 已通过 Chrome 实测（2026-11-13）：160×90 Courier 49.8 fps；Type3 渲染可用但慢 3.4×。
+- 默认值已定：`--fps 30`、字体后端 Courier（D10）。
 - 正式生成器未开始。详细事实见根目录 `STATUS.md` 与 `docs/SPIKES.md`。
-- 下一步：用户在 Chrome 回填 S1 吞吐与 S2 Type3 结果，再定 `--fps` / 字体后端。
+- 下一步：实现 `chart2pdf` + `pdfc.py`（先 `frames` 模式），再跑 S3/S5。
 
 ## 目录规划
 
@@ -30,8 +31,10 @@ ADOPDF/
 ├── docs/
 ├── pdfc.py                 # Python 编译器前端（唯一入口）
 ├── tools/pdf/
-│   ├── native/             # C++ 生成器（链接 ADOCAO core）
+│   ├── native/             # chart2pdf（C++，链接 ADOCAO core）+ scene_format.h
 │   ├── third_party/        # vendored glm / rapidjson（header-only）
 │   └── spike/              # S1/S2 最小 PDF
-└── tests/                  # Python 单测 + 生成冒烟
+└── tests/
+    ├── fixtures/           # mini.adofai（快速冒烟）
+    └── *.py               # Python 单测（含 JS 载荷对拍）
 ```

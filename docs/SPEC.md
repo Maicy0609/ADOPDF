@@ -24,7 +24,7 @@ v1 只接受明文 `.adofai`。`.adofai.xz`、`.adofai.zst`、`.ilytx`、`.adoca
 
 | 部分 | 内容 |
 |---|---|
-| 页面 | 1280×768 pt；上方 1280×720 为 160×90 字符屏（8×8 pt 格），下方 48 pt 为 HUD/按钮 |
+| 页面 | 1280×816 pt；24 pt 上边距 + 1280×720 字符屏（160×90 个 8×8 pt 格）+ 60 pt 控制栏（见 D12） |
 | 屏幕 | 90 个只读单行文本字段，每行一个 |
 | HUD | 1 个文本字段：时间、砖号/总数、BPM、相机 x/y/rot/zoom、进度条 |
 | 控制 | `Start`、`Play/Pause`、`Restart` 三个按钮 |
@@ -35,13 +35,15 @@ v1 只接受明文 `.adofai`。`.adofai.xz`、`.adofai.zst`、`.ilytx`、`.adoca
 | 参数 | 默认 | 说明 |
 |---|---|---|
 | `--render frames\|runtime` | `frames` | 构建期字符帧 / 运行时渲染，见 D3 |
-| `--fps N` | 30（S1 后回调） | bake fps；固定时间轴 |
-| `--zoom-scale F` | 1.0 | 谱面 zoom 的倍率 |
-| `--grid WxH` | 160x90 | v1 固定；更高分辨率只作为实验 |
+| `--fps N` | 30（S1 已确认，见 D10） | bake fps；固定时间轴 |
+| `--play-fps M` | 30 | PDF 里的播放帧率；小于 `--fps` 即慢放（`--fps 60 --play-fps 30` = 0.5×，见 D13） |
+| `--zoom-scale F` | 1.0 | 相机 adoZoom 的倍率；ADOB-C 口径下 >1 = 看得更远（见 D11） |
+| `--rows N` | 90 | 字符屏行数（60..180），列数按 8pt 等宽自动配平；90 行 → 266 列（见 D13） |
+| `--grid WxH` | 自动 | 显式覆盖列数；默认由 `--rows` 推出 |
 | `--max-seconds S` | 300 | 超过则报错，不静默截断 |
-| `--max-frames N` | 12000 | 超过则报错 |
+| `--max-frames N` | 24000 | 超过则报错 |
 | `--no-hud` | 关 | 隐藏 HUD（按钮仍保留） |
-| `--type3\|--courier` | 自动 | 强制字形后端；默认先 Type3，失败回退 |
+| `--type3\|--courier` | `--courier` | 字形后端；Type3 用连续码 48–57（见 D12），编码写错会被 PDFium 丢弃 |
 | `--trace-csv` | 关 | 输出 `timeline.csv`（调试用，不是验收门槛） |
 
 ## 5. 视觉契约
